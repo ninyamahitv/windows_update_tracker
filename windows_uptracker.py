@@ -1,4 +1,5 @@
  # ------------------ Database Initialisation ------------------ #
+
 import sqlite3
 
 conn = sqlite3.connect('windows_uptracker.db')    #connection object for database. File saved as windows_uptracker.db
