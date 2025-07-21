@@ -2,9 +2,9 @@
 
 import sqlite3
 
-conn = sqlite3.connect('windows_uptracker.db')    #connection object for database. File saved as windows_uptracker.db
+conn = sqlite3.connect('windows_uptracker.db')    
 
-cursor = conn.cursor()                                                              #variable called cursor allows for sql commands
+cursor = conn.cursor()                                                             
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS server_status (          
                 server_hostname text,
@@ -13,24 +13,40 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS server_status (
                   )           
                 """)
 
+
+def db_variables():
+
+    global server_list
+    global server_names
+    cursor.execute("SELECT * FROM server_status")    
+    
+    server_list = cursor.fetchall() 
+
+    server_names = [x[0] for x in server_list]
+
 # ------------------ CRUD Functions ------------------ #
 
 #---READ---#
 
 def server_status():
-    cursor.execute("SELECT * FROM server_status")
-    print(cursor.fetchall())
+    db_variables()
+    print(server_list)
 
     func_menu()
 
 #---CREATE---#
 
 def add_new_server():
+
+    db_variables()
                                                                   
-    new_server = str(input("\nWhat is the name of the new server? Type quit to exit.\n\n"))
+    new_server = str(input("\nWhat is the hostname of the new server? Type quit to exit.\n\n"))
 
     if new_server == "quit":
         func_menu()
+    elif new_server in server_names:
+        print(f"\n{new_server} already exists, please enter a new server hostname")
+        add_new_server()    
     else:    
         new_server_OS = str(input("\nWhat OS is it running? Type quit to exit.\n\n"))
         
@@ -51,30 +67,24 @@ def add_new_server():
 
 def update_server():
 
-    cursor.execute("SELECT * FROM server_status")
+    db_variables()
 
-    update_list = cursor.fetchall() # saves the query for the server hostname as a variable, that we can check agaist
-
-    print(update_list)
+    print(server_list)
                                                               
     updated_server = str(input("\nWhat is the name of the server to be updated? Type quit to exit.\n\n"))
    
-    server_names = [x[0] for x in update_list]
-
     if updated_server == "quit":
         func_menu()
-
     elif updated_server not in server_names:
-        print(f"{updated_server} is not a recorded server\n")
+        print(f"\n{updated_server} is not a recorded server\n")
         update_server()  
-    
     else:
         updated_server_OS = str(input("\nWhat OS is it now running? Type quit to exit\n\n"))
         
         if updated_server_OS == "quit":
                 func_menu()
         else:
-            updated_server_patch = str(input("\nWhat security patch doess it now have (KB number)? Type quit to exit\n\n"))
+            updated_server_patch = str(input("\nWhat security patch does it now have (KB number)? Type quit to exit\n\n"))
 
             if updated_server_patch == "quit":
                 func_menu()
@@ -87,26 +97,22 @@ def update_server():
 #---DELETE---#
 
 def delete_server():
-      
-    cursor.execute("SELECT server_hostname FROM server_status")     # Selects all the server hostnames in the database
-    
-    server_list = cursor.fetchall() # saves the query for the server hostname as a variable, that we can check agaist
 
-    print(server_list)        # Prints all the server hostnames in the database
+    db_variables()
+   
+    print(server_list) 
 
     deleted_server = str(input("\nServer: "))
-
-    if (deleted_server,) in server_list:
+ 
+    if deleted_server == "quit":
+        func_menu()
+    elif deleted_server in server_names:
         cursor.execute("DELETE FROM server_status WHERE server_hostname = ?",(deleted_server,))
         conn.commit()
-        print(f"{deleted_server} has been removed")
+        print(f"\n{deleted_server} has been removed\n")
         func_menu()
-    
-    elif deleted_server == "quit":
-        func_menu()
-
     else:
-        print(f"{deleted_server} does not exist in the table")
+        print(f"\n{deleted_server} does not exist in the table\n")
         delete_server()
 
 # ------------------ User Menu ------------------ #
@@ -119,16 +125,16 @@ def func_menu():
         
         if user_choice == 1:
             print(f"\n Here is the current patch status of all servers\n")
-            #server_status()
+            server_status()
         elif user_choice == 2:
-            print("\nAdding a new server and its associated patch\n")
-            #add_new_server()
+            print("\nAdding a new server and it's associated patch\n")
+            add_new_server()
         elif user_choice== 3:
-            print("\nUpdating an existing server OS and security patch\n")
-            #update_server()
+            print("\nUpdating an exisiting server OS and security patch\n")
+            update_server()
         elif user_choice== 4:
             print("\nWhich server do you need to delete? Type quit to exit.\n")
-            #delete_server()
+            delete_server()
         elif user_choice == 0:
             print("\nGoodbye!\n")
             quit()
