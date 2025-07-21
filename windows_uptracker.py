@@ -26,10 +26,7 @@ def server_status():
 #---CREATE---#
 
 def add_new_server():
-    global new_server
-    global new_server_OS
-    global new_server_patch
-                                                              
+                                                                  
     new_server = str(input("\nWhat is the name of the new server? Type quit to exit.\n\n"))
 
     if new_server == "quit":
@@ -53,10 +50,6 @@ def add_new_server():
 #---UPDATE---#
 
 def update_server():
-
-    global updated_server
-    global updated_server_OS
-    global updated_server_patch
 
     cursor.execute("SELECT * FROM server_status")
 
@@ -94,9 +87,7 @@ def update_server():
 #---DELETE---#
 
 def delete_server():
-
-    global deleted_server
-    
+      
     cursor.execute("SELECT server_hostname FROM server_status")     # Selects all the server hostnames in the database
     
     server_list = cursor.fetchall() # saves the query for the server hostname as a variable, that we can check agaist
@@ -133,7 +124,7 @@ def func_menu():
             print("\nAdding a new server and its associated patch\n")
             #add_new_server()
         elif user_choice== 3:
-            print("\nUpdating an exisiting server OS and security patch\n")
+            print("\nUpdating an existing server OS and security patch\n")
             #update_server()
         elif user_choice== 4:
             print("\nWhich server do you need to delete? Type quit to exit.\n")
