@@ -1,5 +1,3 @@
-'''Windows Update Tracker code'''
-
 # ------------------ Database Initialisation ------------------ #
 
 import sqlite3
@@ -132,10 +130,10 @@ def func_menu():
         elif user_choice == 2:
             print("\nAdding a new server and it's associated patch\n")
             add_new_server()
-        elif user_choice== 3:
+        elif user_choice == 3:
             print("\nUpdating an exisiting server OS and security patch\n")
             update_server()
-        elif user_choice== 4:
+        elif user_choice == 4:
             print("\nWhich server do you need to delete? Type quit to exit.\n")
             delete_server()
         elif user_choice == 0:
