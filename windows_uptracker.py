@@ -130,7 +130,7 @@ def func_menu():
             print(f"\n Here is the current patch status of all servers\n")
             #server_status()
         elif user_choice == 2:
-            print("\nAdding a new server and it's associated patch\n")
+            print("\nAdding a new server and its associated patch\n")
             #add_new_server()
         elif user_choice== 3:
             print("\nUpdating an exisiting server OS and security patch\n")
