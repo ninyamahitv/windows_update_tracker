@@ -13,11 +13,11 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS server_status (
                   )           
                 """)
 
-# ------------------ User Interactions ------------------ #
+# ------------------ User Menu ------------------ #
 
 print("\nWelcome to the Windows Update Tracker v1.1\n")
 
-def func_welcome():
+def func_menu():
     try:
         user_choice = int(input("\nPress 1 to see the status of all servers\nPress 2 to add a new server\nPress 3 to update an existing server\nPress 4 to delete a server\nPress 0 to quit\n\n")) 
         
@@ -38,10 +38,10 @@ def func_welcome():
             quit()
         else:
             print("\nYour choice is not valid\n")
-            func_welcome()
+            func_menu()
   
     except ValueError:
         print("\nYour input is not a valid character\n")
-        func_welcome()
+        func_menu()
 
-func_welcome()
+func_menu()
