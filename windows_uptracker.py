@@ -2,36 +2,56 @@
 
 import sqlite3
 
-conn = sqlite3.connect('windows_uptracker.db')
 
-cursor = conn.cursor()
+def db_connection():
+    conn = sqlite3.connect('windows_uptracker.db')
+    cursor = conn.cursor()
+    return conn, cursor
 
-cursor.execute("""CREATE TABLE IF NOT EXISTS server_status (
+
+db_connect,db_cursor = db_connection()
+
+db_cursor.execute("""CREATE TABLE IF NOT EXISTS server_status (
                 server_hostname text,
                 operating_system text,
                 installed_update text
                   )           
                 """)
 
+db_connect.close()
 
 def db_variables():
 
     global server_list
     global server_names
 
-    cursor.execute("SELECT * FROM server_status")
-
-    server_list = cursor.fetchall()
+    db_connect,db_cursor = db_connection()
+    db_cursor.execute("SELECT * FROM server_status")
+    server_list = db_cursor.fetchall()
+    db_connect.close()
 
     server_names = [x[0] for x in server_list]
+
+def server_table():
+
+    db_variables()
+
+    print("\n-***-  Server Status -***-\n")
+    print(f"{'Server Hostname':<25} {'Operating System':<25} {'Installed Update':<25}")
+    print("-" * 70)
+
+    for server in server_list:
+        print(f"{server[0]:<25} {server[1]:<25} {server[2]:<25}")
+
+
 
 # ------------------ CRUD Functions ------------------ #
 
 #---READ---#
 
 def server_status():
-    db_variables()
-    print(server_list)
+
+    server_table()
 
     func_menu()
 
@@ -39,7 +59,7 @@ def server_status():
 
 def add_new_server():
 
-    db_variables()
+    server_table()
 
     new_server = str(input("\nWhat is the hostname of the new server? Type quit to exit.\n\n"))
 
@@ -59,8 +79,10 @@ def add_new_server():
             if new_server_patch == "quit":
                 func_menu()
             else:
-                cursor.execute("INSERT INTO server_status VALUES (?, ?, ?)",(new_server,new_server_os,new_server_patch))
-                conn.commit()
+                db_connect,db_cursor = db_connection()
+                db_cursor.execute("INSERT INTO server_status VALUES (?, ?, ?)",(new_server,new_server_os,new_server_patch))
+                db_connect.commit()
+                db_connect.close()
                 print(f"\n{new_server} has been added with {new_server_os} OS and {new_server_patch} security patch\n")
                 func_menu()
 
@@ -68,9 +90,7 @@ def add_new_server():
 
 def update_server():
 
-    db_variables()
-
-    print(server_list)
+    server_table()
 
     updated_server = str(input("\nWhat is the name of the server to be updated? Type quit to exit.\n\n"))
 
@@ -90,8 +110,10 @@ def update_server():
             if updated_server_patch == "quit":
                 func_menu()
             else:
-                cursor.execute("UPDATE server_status SET operating_system = ?, installed_update = ? WHERE server_hostname  = ?",(updated_server_os,updated_server_patch,updated_server))
-                conn.commit()
+                db_connect,db_cursor = db_connection()
+                db_cursor.execute("UPDATE server_status SET operating_system = ?, installed_update = ? WHERE server_hostname  = ?",(updated_server_os,updated_server_patch,updated_server))
+                db_connect.commit()
+                db_connect.close()
                 print(f"{updated_server} has been updated with {updated_server_os} OS and {updated_server_patch} security patch")
                 func_menu()
 
@@ -99,17 +121,17 @@ def update_server():
 
 def delete_server():
 
-    db_variables()
-
-    print(server_list)
+    server_table()
 
     deleted_server = str(input("\nServer: "))
 
     if deleted_server == "quit":
         func_menu()
     elif deleted_server in server_names:
-        cursor.execute("DELETE FROM server_status WHERE server_hostname = ?",(deleted_server,))
-        conn.commit()
+        db_connect,db_cursor = db_connection()
+        db_cursor.execute("DELETE FROM server_status WHERE server_hostname = ?",(deleted_server,))
+        db_connect.commit()
+        db_connect.close()
         print(f"\n{deleted_server} has been removed\n")
         func_menu()
     else:
