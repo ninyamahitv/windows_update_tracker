@@ -2,12 +2,10 @@
 
 import sqlite3
 
-
 def db_connection():
     conn = sqlite3.connect('windows_uptracker.db')
     cursor = conn.cursor()
     return conn, cursor
-
 
 db_connect,db_cursor = db_connection()
 
@@ -42,8 +40,6 @@ def server_table():
 
     for server in server_list:
         print(f"{server[0]:<25} {server[1]:<25} {server[2]:<25}")
-
-
 
 # ------------------ CRUD Functions ------------------ #
 
